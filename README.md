@@ -1,2 +1,1 @@
-# sino-xenic-dict
- 
+# Sino-Xenic dictionary

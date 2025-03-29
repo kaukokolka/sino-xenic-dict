@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sino-Xenic Dictionary</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+    </style>
+</head>
+<body>
+    <header>
+      <h1>Plantcare</h1>
+    </header>
+    <table id="data-table">
+      <tr>
+        <th>Word</th>
+        <th>Language</th>
+        <th>Meaning</th>
+        <th>Reading</th>
+        <th>Approved</th>
+        <th>Actions</th>
+      </tr>
+    </table>
+    <script>
+        // Fetch data from server and populate the HTML page
+        fetch('/worddata')
+        .then(response => response.json())
+        .then(data => {
+          const dataTable = document.getElementById('data-table');
+          data.forEach(item => {
+            const tr = document.createElement('tr');
+            const td1 = document.createElement('td');
+            const td2 = document.createElement('td');
+            const td3 = document.createElement('td');
+            const td4 = document.createElement('td');
+            const td5 = document.createElement('td');
+            const td6 = document.createElement('td');
+            const a = document.createElement('a');
+            td1.textContent = `${item.word}`;
+            td2.textContent = `${item.language}`;
+            td3.textContent = `${item.meaning}`;
+            td4.textContent = `${item.reading}`;
+            td5.textContent = `${item.approved}`;
+            a.innerHTML = 'See page';
+            a.href = `/words/${item.word}`;
+            dataTable.appendChild(tr);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tr.appendChild(td4);
+            tr.appendChild(td5);
+            tr.appendChild(td6);
+            td6.appendChild(a);
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    </script>
+  </body>
+  </html>
