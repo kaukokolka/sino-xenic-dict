@@ -1,10 +1,8 @@
-# specify the node base image with your desired version node:<version>
-FROM node:23.10.0
+FROM node:18
 WORKDIR /app
-ADD . /app/
 COPY package*.json ./
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 RUN npm install
-RUN npm install sqlite3
+COPY . .
 EXPOSE 8080
-# Run the app
-CMD [ "npm", "start" ]
+CMD ["node", "app.js"]

@@ -18,8 +18,12 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));
  });
 
- app.get('/data', (req, res) => { //lai ienestu visu words(Words) tabulu
-     db.all('SELECT * FROM Words ORDER BY char_id ASC', (err, rows) => {
+ app.get('/test', (req, res) => {
+  res.send('It wrok!');
+});
+
+ app.get('/worddata', (req, res) => { //lai ienestu visu words(Words) tabulu
+     db.all('SELECT * FROM Words ORDER BY word_id ASC', (err, rows) => {
          if (err) {
              console.error(err.message);
              return res.status(500).send('Internal Server Error');
