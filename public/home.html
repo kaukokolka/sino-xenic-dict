@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sino-Xenic Dictionary</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-    </style>
 </head>
 <body>
     <header>
-      <h1>Sino-Xenic Dictionary</h1>
+      <h1>Sino-Xenic Dictionary </h1>
     </header>
+    <form id="search-form" action="/search" method="GET">
+      <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings">
+      <button type="submit">Search</button>
+    </form>
     <table id="data-table">
       <tr>
         <th>Word</th>

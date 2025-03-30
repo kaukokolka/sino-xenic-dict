@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Search Results</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Sino-Xenic Dictionary </h1>
+  </header>
+  <form id="search-form" action="/search" method="GET">
+    <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings">
+    <button type="submit">Search</button>
+  </form>
+
+  <h1>Search Results for "<%= query %>"</h1>
+
+  <% if (characters.length > 0) { %>
+  <h2>Characters</h2>
+  <table>
+    <tr>
+      <th>Character</th>
+      <th>Meaning</th>
+      <th>CN</th>
+      <th>KR</th>
+      <th>On'yomi</th>
+      <th>Kun'yomi</th>
+    </tr>
+    <% characters.forEach(char => { %>
+      <tr>
+        <td><%= char.char %></td>
+        <td><%= char.meaning %></td>
+        <td><%= char.reading_cn %></td>
+        <td><%= char.reading_kr %></td>
+        <td><%= char.reading_jp_on %></td>
+        <td><%= char.reading_jp_kun %></td>
+      </tr>
+    <% }) %>
+  </table>
+<% } else { %>
+  <p>ʅ ( ․ ⤙ ․) ʃ   Sorry. No matching characters.</p>
+<% } %>
+
+<hr>
+
+<h2>Words</h2>
+
+<!-- Reuse the word table from before -->
+<% if (words.length > 0) { %>
+  <table>
+    <tr>
+      <th>Word</th>
+      <th>Language</th>
+      <th>Meaning</th>
+      <th>Reading</th>
+      <th>Approved</th>
+      <th>Actions</th>
+    </tr>
+    <% words.forEach(item => { %>
+      <tr>
+        <td><%= item.word %></td>
+        <td><%= item.language %></td>
+        <td><%= item.meaning %></td>
+        <td><%= item.reading %></td>
+        <td><%= item.approved %></td>
+        <td><a href="/words/<%= item.word %>">See page</a></td>
+      </tr>
+    <% }) %>
+  </table>
+<% } else { %>
+  <p>ʅ ( ․ ⤙ ․) ʃ   Sorry. No matching words.</p>
+<% } %>
+
+</body>
+</html>

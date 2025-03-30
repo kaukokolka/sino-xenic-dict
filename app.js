@@ -32,6 +32,39 @@ app.get('/', function (req, res) {
      });
  });
 
+ app.get('/search', (req, res) => {
+   const query = req.query.query;
+   const like = `%${query}%`;
+
+   const wordSql = `
+     SELECT * FROM Words
+     WHERE (word LIKE ? OR reading LIKE ? OR meaning LIKE ?)`;
+
+   const charSql = `
+     SELECT * FROM Characters
+     WHERE char LIKE ?
+        OR meaning LIKE ?
+        OR reading_cn LIKE ?
+        OR reading_kr LIKE ?
+        OR reading_jp_on LIKE ?
+        OR reading_jp_kun LIKE ?`;
+
+   db.all(wordSql, [like, like, like], (err1, wordResults) => {
+     if (err1) return res.status(500).send('Word search failed');
+
+     db.all(charSql, [like, like, like, like, like, like], (err2, charResults) => {
+       if (err2) return res.status(500).send('Character search failed');
+
+       res.render('search', {
+         query,
+         words: wordResults,
+         characters: charResults
+       });
+     });
+   });
+ });
+
+
  app.use((req, res) => {
    res.status(404).send('404 Not Found');
 });
