@@ -89,6 +89,7 @@ app.get('/worddata', (req, res) => { //lai ienestu visu words(Words) tabulu
 });
 
 app.get('/search', (req, res) => {
+    const userId = req.session.userId;
     const query = req.query.query;
     const like = `%${query}%`;
     const uniqueChars = extractHanCharacters(query);
@@ -117,12 +118,27 @@ app.get('/search', (req, res) => {
     db.all(wordSql, [like, like, like], (err1, wordResults) => {
         if (err1) return res.status(500).send('Word search failed');
         db.all(charSql, params, (err2, charResults) => {
-            if (err2) return res.status(500).send('Character search failed');
-            res.render('search', {
+          if (userId) { //logged in users
+              db.all('SELECT * FROM Collections WHERE user_id = ?', [userId], (err, collections) => {
+                if (err) {
+                  console.error(err);
+                  return res.status(500).send('Internal Server Error');
+                }
+                res.render('search', {
+                  query,
+                  words: wordResults,
+                  characters: charResults,
+                  collections
+                });
+              });
+            } else { //logged out users
+              res.render('search', {
                 query,
                 words: wordResults,
-                characters: charResults
-            });
+                characters: charResults,
+                collections: []
+              });
+            }
         });
     });
 });
@@ -261,6 +277,56 @@ app.post('/addword', requireAuth, requireAdmin, (req, res) => {
         });
     });
 });
+
+app.post('/add-to-collection', requireAuth, (req, res) => {
+  const userId = req.session.userId;
+  const { wordId, collectionName } = req.body;
+
+  db.get('SELECT collection_id FROM Collections WHERE name = ? AND user_id = ?', [collectionName, userId], (err, row) => {   // 1. Atrod collection_id nemot vera user_id etc
+    if (err || !row) {
+      console.error('Collection not found:', err);
+      return res.status(400).send('Collection not found');
+    }
+
+    const collectionId = row.collection_id;
+
+    const now = Math.floor(Date.now() / 1000)
+    db.run('INSERT OR IGNORE INTO CollectionWords (collection_id, word_id, added_time) VALUES (?, ?, ?)', [collectionId, wordId, now], (err) => { //ievieto linkinga tabula
+      if (err) {
+        console.error('Error adding word to collection:', err);
+        return res.status(500).send('Internal Server Error');
+      }
+
+      res.status(200).send('Word added to collection!');
+    });
+  });
+});
+
+app.post('/create-and-add', requireAuth, (req, res) => {
+  const userId = req.session.userId;
+  const { name, word_id } = req.body;
+
+  db.get('SELECT collection_id FROM Collections WHERE name = ? AND user_id = ?', [name.trim(), userId], (err, row) => {
+    if (err) return res.status(500).send('Error checking existing collection');
+
+    if (row) {
+      return res.status(400).send('A collection with that name already exists.');
+    }
+
+    // Create new collection
+    db.run('INSERT INTO Collections (user_id, name) VALUES (?, ?)', [userId, name.trim()], function(err) {
+      if (err) return res.status(500).send('Error creating collection');
+      const newId = this.lastID;
+      const now = Math.floor(Date.now() / 1000);
+      db.run('INSERT OR IGNORE INTO CollectionWords (collection_id, word_id, added_time) VALUES (?, ?, ?)', [newId, word_id, now], (err) => {
+          if (err) return res.status(500).send('Error adding word');
+          res.sendStatus(200);
+        }
+      );
+    });
+  });
+});
+
 
 function isBlank(str) { //ievades pārbaude vai tajā ir tikai tukši simboli
     return str.trim().length === 0;
