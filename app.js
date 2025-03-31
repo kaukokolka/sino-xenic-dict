@@ -78,16 +78,6 @@ app.get('/test', (req, res) => {
     res.send('It wrok!');
 });
 
-app.get('/worddata', (req, res) => { //lai ienestu visu words(Words) tabulu
-    db.all('SELECT * FROM Words ORDER BY word ASC, language ASC', (err, rows) => { //kārto pēc vārda un tad valodu pārredzamībai
-        if (err) {
-            console.error(err.message);
-            return res.status(500).send('Internal Server Error');
-        }
-        res.json(rows);
-    });
-});
-
 app.get('/search', (req, res) => {
     const userId = req.session.userId;
     const query = req.query.query;
@@ -143,6 +133,70 @@ app.get('/search', (req, res) => {
     });
 });
 
+app.get('/collections/:id', requireAuth, (req,res) => { //dinamiski renderēt auga informācijas EJS veidni, kad tas tiek pieprasīts
+    const collectionId = req.params.id;
+    const userId = req.session.userId;
+
+    db.get('SELECT * FROM Collections WHERE collection_id = ? AND user_id = ?', [collectionId, userId], (err, collection) => {
+        if (err) {
+            console.error('internal server error querying ID:', err);
+            res.status(500).send('Internal Server Error'); //500 internal server error
+            return;
+        }
+        if (!collection) {
+            console.log('Collection not Found');
+            res.status(404).send('404 Not Found'); //404 not found
+            return;
+        }
+
+        db.all('SELECT Words.* FROM Words JOIN CollectionWords ON Words.word_id = CollectionWords.word_id WHERE CollectionWords.collection_id = ?',
+        [collectionId], (err, words) => { //paņemt visus vārdus no Words kuru wordid ir dotajā collection
+            if (err) {
+                console.error('Error fetching collection words in join:', err);
+                return res.status(500).send('Internal Server Error');
+            }
+
+            const wordCount = words.length;
+            const uniqueChars = new Set(); //set lai tikai pienemtu atskirigos chars
+            console.log('uniquechars:', uniqueChars);
+
+            words.forEach(word => {
+              const chars = extractHanCharacters(word.word);
+              chars.forEach(c => uniqueChars.add(c));
+            });
+
+            const charList = Array.from(uniqueChars); //parverst uz array lai vieglak stradat ar to
+            console.log('charlist:', charList);
+            const characterCount = charList.length;
+
+            if (charList.length === 0) {
+                return res.render('collection.ejs', { collection, words, characters: [] });
+            }
+
+            const placeholders = charList.map(() => '?').join(', ');
+            const sql = `SELECT * FROM Characters WHERE char IN (${placeholders})`;
+
+            db.all(sql, charList, (err, characters) => {
+              if (err) {
+                console.error('Error fetching characters:', err);
+                return res.status(500).send('Internal Server Error');
+              }
+            res.render('collection.ejs', { collection, words, characters, wordCount, characterCount });
+            });
+        });
+      });
+});
+
+app.get('/worddata', (req, res) => { //lai ienestu visu words(Words) tabulu
+    db.all('SELECT * FROM Words ORDER BY word ASC, language ASC', (err, rows) => { //kārto pēc vārda un tad valodu pārredzamībai
+        if (err) {
+            console.error(err.message);
+            return res.status(500).send('Internal Server Error');
+        }
+        res.json(rows);
+    });
+});
+
 app.get('/user', requireAuth, function (req, res) { //lai ienestu lietotāja datus, kur nepieciešams, sesijas laikā
     const userId = req.session.userId;
     db.get('SELECT username, admin, create_time FROM Users WHERE user_id = ?', [userId], (err, row) => {
@@ -169,7 +223,7 @@ app.post('/validate', (req, res) => { //Verificēt vai ievadītie dati sakrīt a
     //console.log(datpix.foo());
     db.get('SELECT * FROM Users WHERE username = ? AND password = ?', [username, password], (err, row) => {
         if (err)  {
-            console.error('internal server error after login:', err);
+            console.error('internal server error after signin:', err);
             res.status(500).send('Internal Server Error'); //500 internal server error
             return;
         }
@@ -237,7 +291,7 @@ app.post('/newuser', (req, res) => { //Jauna lietotāja izveidei
                 return;
             }
             console.log('User is created!'); // Log successful account creation attempt
-            res.redirect('/login');
+            res.redirect('/signin');
         });
     });
 });
