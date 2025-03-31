@@ -10,14 +10,15 @@
     <h1>Sino-Xenic Dictionary </h1>
   </header>
   <form id="search-form" action="/search" method="GET">
-    <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings">
+    <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings" value="<%= query %>">
     <button type="submit">Search</button>
   </form>
 
   <h1>Search Results for "<%= query %>"</h1>
 
-  <% if (characters.length > 0) { %>
   <h2>Characters</h2>
+
+  <% if (characters.length > 0) { %>
   <table>
     <tr>
       <th>Character</th>
@@ -54,7 +55,7 @@
       <th>Language</th>
       <th>Meaning</th>
       <th>Reading</th>
-      <th>Approved</th>
+      <th>Collections test</th>
       <th>Actions</th>
     </tr>
     <% words.forEach(item => { %>
@@ -63,7 +64,17 @@
         <td><%= item.language %></td>
         <td><%= item.meaning %></td>
         <td><%= item.reading %></td>
-        <td><%= item.approved %></td>
+        <td>
+          <div class="dropdown">
+            <button class="dropdown-button" onclick="toggleDropdown(this)">Add to Collection ▼</button>
+            <div class="dropdown-content">
+              <div onclick="test()"><b>+ Create new collection</b></div>
+              <div onclick="selectCollection('Favorites')">Favorites</div>
+              <div onclick="selectCollection('Reading List')">Reading List</div>
+              <div onclick="selectCollection('Archive')">Archive</div>
+            </div>
+          </div>
+        </td>
         <td><a href="/words/<%= item.word %>">See page</a></td>
       </tr>
     <% }) %>
@@ -72,5 +83,30 @@
   <p>ʅ ( ․ ⤙ ․) ʃ   Sorry. No matching words.</p>
 <% } %>
 
+<script>
+  function test() {
+    console.log('test');
+  }
+
+  function toggleDropdown(button) {
+    const dropdown = button.closest('.dropdown');
+    dropdown.classList.toggle('show');
+  }
+
+  function selectCollection(name) {
+    const dropdown = button.closest('.dropdown');
+    console.log(`Selected collection: ${name}`);
+    dropdown.classList.remove('show');
+  }
+
+  // Aizvert dropdown clickojot ara no dropdown ja kads ir atverts
+  window.addEventListener('click', function(e) {
+    document.querySelectorAll('.dropdown.show').forEach(dropdown => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+  });
+</script>
 </body>
 </html>

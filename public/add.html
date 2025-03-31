@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sino-Xenic Dictionary</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Sino-Xenic Dictionary </h1>
+  </header>
+  <div id="newWordUI" class="form">
+    <h2 style="margin-top: 0;">Add word to dictionary</h2>
+    <form action="/addword" method="post">
+        <label for="word">Word:</label> <br/>
+        <input type="text" id="word" name="word" required> <br/>
+        <label for="language">Language:</label>
+        <select name="language" id="language">
+          <option value="CN">Mandarin Chinese</option>
+          <option value="JP">Japanese</option>
+          <option value="KR">Korean</option>
+        </select> <br/>
+        <label for="meaning">Meaning(in English):</label> <br/>
+        <input type="text" id="meaning" name="meaning" required> <br/>
+        <label for="reading">Reading(Pinyin, Kana or Hangul):</label> <br/>
+        <input type="text" id="reading" name="reading" required> <br/>
+        <input type="submit" id="submit" value="Submit">
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Sign up Sino-Xenic Dictionary</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<div style="width:200px; margin: auto;" class="form">
+    <h1 style="margin-top: 0;">Create new account</h1>
+    <form action="/newuser" method="post" style="width: 280px; margin: auto;">
+        <label for="username">Username:</label> <br/>
+        <input type="text" id="username" name="username" placeholder="Username" required> <br/>
+        <label for="password">Password:</label> <br/>
+        <input type="password" id="password" name="password" placeholder="Password" required> <br/>
+        <label for="password">Repeat password:</label> <br/>
+        <input type="password" id="repeat-password" name="repeatPassword" placeholder="Password" required> <br/>
+        <input type="submit" value="Create" style="margin: 10px 0;">
+    </form>
+    <a href="/signin">Already have an account?</a>
+</div>
