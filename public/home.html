@@ -10,7 +10,7 @@
     <header>
       <h1>Sino-Xenic Dictionary </h1>
     </header>
-    
+
     <form id="search-form" action="/search" method="GET">
       <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings">
       <button type="submit">Search</button>
@@ -46,7 +46,7 @@
             td4.textContent = `${item.reading}`;
             td5.textContent = `${item.approved}`;
             a.innerHTML = 'See page';
-            a.href = `/words/${item.word}`;
+            a.href = `/search?query=${item.word}`;
             dataTable.appendChild(tr);
             tr.appendChild(td1);
             tr.appendChild(td2);

@@ -17,8 +17,48 @@ th {
   background-color: #f5f5f5;
 }
 
-h1, h2 {
-  font-family: Helvetica, sans-serif;
+h1 {
+  font-size: 3em;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h1, h2, h3 {
+  font-weight: normal;
+}
+
+header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.usern-shower {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: grey;
+  margin-right: 70px;
+  padding: 0.5rem 1rem;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 1.2rem;
+  width: 220px;
+  height: 1.2em;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.usern-span {
+  white-space: nowrap;
+  overflow: hidden;         /* hide overflow */
+  text-overflow: ellipsis;  /* show ... at end */
+  max-width: 195px;
 }
 
 .dropdown {
@@ -45,6 +85,9 @@ h1, h2 {
   z-index: 1;
   border-radius: 6px;
   margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;         /* hide overflow */
+  text-overflow: ellipsis;  /* show ... at end */
 }
 
 .dropdown-content div {

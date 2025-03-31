@@ -332,8 +332,8 @@ app.get('/logout', (req, res) => { //beigt sesiju
 
 app.post('/newuser', (req, res) => { //Jauna lietotāja izveidei
     const { username, password, repeatPassword } = req.body;
-    if (username.length > 20) { //pārbauda lietotājvarda garumu
-        res.status(400).send('Too long username. Please keep to 20 characters or less!');
+    if (username.length > 16) { //pārbauda lietotājvarda garumu
+        res.status(400).send('Too long username. Please keep to 16 characters or less!');
         return;
     }
     db.get('SELECT 1 FROM Users WHERE username = ?', [username], (err, row) => { //vaicājums datubāzei ievadītam lietotājvārdam

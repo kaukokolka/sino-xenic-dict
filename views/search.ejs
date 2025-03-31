@@ -8,13 +8,17 @@
 <body>
   <header>
     <h1>Sino-Xenic Dictionary </h1>
+    <div class="usern-shower">
+      <span id="usern-span" class="usern-span">janedoasassaasasase猫です</span>
+      <span id="usern-preferences" class="usern-pref">▼</span>
+    </div>
   </header>
   <form id="search-form" action="/search" method="GET">
     <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings" value="<%= query %>">
     <button type="submit">Search</button>
   </form>
 
-  <h1>Search Results for "<%= query %>"</h1>
+  <h3 style="color: grey;">Search Results for "<%= query %>"</h3>
 
   <h2>Characters</h2>
 
@@ -75,7 +79,7 @@
             </div>
           </div>
         </td>
-        <td><a href="/words/<%= item.word %>">See page</a></td>
+        <td><a href="/search?query=<%= item.word %>">See page</a></td>
       </tr>
     <% }) %>
   </table>
@@ -84,9 +88,6 @@
 <% } %>
 
 <script>
-  function test() {
-    console.log('test');
-  }
 
   function toggleDropdown(button) {
     const dropdown = button.closest('.dropdown');

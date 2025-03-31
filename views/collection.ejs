@@ -67,7 +67,7 @@
         <td><%= item.language %></td>
         <td><%= item.meaning %></td>
         <td><%= item.reading %></td>
-        <td><a href="/words/<%= item.word %>">See page</a></td>
+        <td><a href="/search?query=<%= item.word %>">See page</a></td>
       </tr>
     <% }) %>
   </table>
