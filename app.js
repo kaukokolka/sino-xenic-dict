@@ -278,8 +278,11 @@ app.get('/worddata', (req, res) => { //lai ienestu visu words(Words) tabulu
     });
 });
 
-app.get('/user', requireAuth, function (req, res) { //lai ienestu lietotāja datus, kur nepieciešams, sesijas laikā
+app.get('/user', function (req, res) { //lai ienestu lietotāja datus, kur nepieciešams, sesijas laikā
     const userId = req.session.userId;
+    if (!userId) {
+        return res.json({ loggedIn: false });
+    }
     db.get('SELECT username, admin, create_time FROM Users WHERE user_id = ?', [userId], (err, row) => {
         if (err) {
             console.error('internal server error querying ID:', err);
@@ -288,12 +291,17 @@ app.get('/user', requireAuth, function (req, res) { //lai ienestu lietotāja dat
         }
         if (!row) {
             console.log('User not Found');
-            res.status(404).send('404 Not Found'); //404 not found
-            return;
+            return res.json({ loggedIn: false });
         }
+        formattedCreateTime = formatTime(row.create_time);
         console.log('user: success!');
         res.setHeader('Content-Type', 'application/json');
-        res.json(row);
+        res.json({
+            loggedIn: true,
+            username: row.username,
+            admin: row.admin,
+            create_time: formattedCreateTime
+        });
     });
 });
 

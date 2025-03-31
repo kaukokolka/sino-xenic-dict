@@ -14,7 +14,7 @@ th, td {
 }
 
 th {
-  background-color: #f5f5f5;
+  background-color: #f5f5f5; /*#FF75BA　#f6e5f7*/
 }
 
 h1 {
@@ -99,6 +99,35 @@ header {
   background-color: #f0f0f0;
 }
 
-.dropdown.show .dropdown-content {
+/*clones kinda*/
+
+.usern-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  width: 250px;
+  border: 1px solid #ccc;
+  z-index: 1;
+  border-radius: 6px;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;         /* hide overflow */
+  text-overflow: ellipsis;  /* show ... at end */
+}
+
+.dropdown.show .usern-dropdown-content {
+  display: block;
+}
+
+.usern-dropdown-content div {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.usern-dropdown-content div:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown.show .usern-dropdown-content {
   display: block;
 }

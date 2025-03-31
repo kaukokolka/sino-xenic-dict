@@ -8,9 +8,15 @@
 <body>
   <header>
     <h1>Sino-Xenic Dictionary </h1>
-    <div class="usern-shower">
-      <span id="usern-span" class="usern-span">janedoasassaasasase猫です</span>
-      <span id="usern-preferences" class="usern-pref">▼</span>
+      <div class="dropdown">
+        <div class="usern-shower" onclick="toggleDropdown(this)">
+          <span id="usern-span" class="usern-span"></span>
+          <span id="usern-preferences" class="usern-pref"></span>
+        </div>
+        <div class="usern-dropdown-content">
+          <div><a href="/collections">My Collections</a></div>
+        </div>
+      </div>
     </div>
   </header>
   <form id="search-form" action="/search" method="GET">
@@ -88,6 +94,26 @@
 <% } %>
 
 <script>
+
+fetch('/user')
+  .then(res => res.json())
+  .then(user => {
+    const span = document.getElementById('usern-span');
+    const pref = document.getElementById('usern-preferences');
+
+    if (user.loggedIn) {
+      span.innerText = user.username;
+      pref.innerText = '▼'; // or whatever dropdown icon/text
+    } else {
+      // If not logged in, show a sign in link instead
+      span.innerHTML = `
+        <a href="/signin" class="login-link">Sign in or up</a>
+      `;
+    }
+  })
+  .catch(err => {
+    console.error('Error fetching user info:', err);
+  });
 
   function toggleDropdown(button) {
     const dropdown = button.closest('.dropdown');
