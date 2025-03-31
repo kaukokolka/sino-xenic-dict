@@ -227,16 +227,42 @@ app.get('/collections/:id/export', requireAuth, (req, res) => {
       }
 
       // Build TSV string
-      let content = 'Word[language]\tReading\tMeaning\n';
-      words.forEach(w => {
-        content += `${w.word}[${w.language}]\t${w.reading}\t${w.meaning}\n`;
-      });
-      const filename = sanitizeFilename(collection.name) + '.tsv';
+      let content = '';
+      const uniqueChars = new Set(); //set lai tikai pienemtu atskirigos chars
 
-      // Set headers for file download
-      res.setHeader('Content-Type', 'text/tab-separated-values');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-      res.send(content);
+      words.forEach(w => {
+        content += `${w.word}[${w.language}]\t${w.reading}<br>${w.meaning}\n`;
+        const chars = extractHanCharacters(w.word);
+        chars.forEach(c => uniqueChars.add(c));
+      });
+      const charList = Array.from(uniqueChars); //parverst uz array lai vieglak stradat ar to
+
+      if (charList.length === 0) {
+        const filename = sanitizeFilename(collection.name) + '.tsv';
+        res.setHeader('Content-Type', 'text/tab-separated-values');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        return res.send(content);
+      }
+
+      // Query Characters table
+      const placeholders = charList.map(() => '?').join(', ');
+      const charSql = `SELECT * FROM Characters WHERE char IN (${placeholders})`;
+
+      db.all(charSql, charList, (err, characters) => {
+        if (err) {
+          console.error('Error fetching characters for export:', err);
+          return res.status(500).send('Internal Server Error');
+        }
+
+        characters.forEach(c => {
+            content += `${c.char}\t${c.meaning}<br><br> <b>Readings:</b><br> Mandarin: ${c.reading_cn} <br> Korean: ${c.reading_kr} <br> Kun'yomi: ${c.reading_jp_kun} <br> On'yomi: ${c.reading_jp_on}\n`;
+        });
+
+        const filename = sanitizeFilename(collection.name) + '.tsv';
+        res.setHeader('Content-Type', 'text/tab-separated-values');       //headers for download
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.send(content);
+      });
     });
   });
 });
