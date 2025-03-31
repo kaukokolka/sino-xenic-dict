@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Search Results</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Sino-Xenic Dictionary </h1>
+  </header>
+  <form id="search-form" action="/search" method="GET">
+    <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings">
+    <button type="submit">Search</button>
+  </form>
+
+  <h1>My Collections</h1>
+
+  <% if (collections.length > 0) { %>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Created at</th>
+    </tr>
+    <% collections.forEach(item => { %>
+      <tr>
+        <td><a href="/collections/<%= item.collection_id %>"><%= item.name %></a></td>
+        <td><%= item.created_at %></td>
+      </tr>
+    <% }) %>
+  </table>
+<% } else { %>
+  <p>It seems you haven't made any collections yet. Try by searching for a word and adding it to one!</p>
+<% } %>
+</body>
+</html>

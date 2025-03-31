@@ -15,7 +15,11 @@
   </form>
 
 
-  <h1>Collections > "<%= collection.name %>"</h1>
+  <h1><a href="/collections">Collections</a> > "<%= collection.name %>"</h1>
+
+  <form action="/collections/<%= collection.collection_id %>/export" method="GET">
+    <button type="submit">Export to Anki (.tsv)</button>
+  </form>
 
   <h2>Characters (<%= characterCount %>)</h2>
 
@@ -48,7 +52,6 @@
 
 <h2>Words (<%= wordCount %>)</h2>
 
-<!-- Reuse the word table from before -->
 <% if (words.length > 0) { %>
   <table>
     <tr>

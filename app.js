@@ -133,6 +133,24 @@ app.get('/search', (req, res) => {
     });
 });
 
+app.get('/collections', requireAuth, (req, res) => {
+  const userId = req.session.userId;
+
+  db.all('SELECT * FROM Collections WHERE user_id = ? ORDER BY name ASC', [userId], (err, collections) => {
+    if (err) {
+      console.error('Error fetching user collections:', err);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    console.log(`Loaded ${collections.length} collections for user ID ${userId}`);
+
+    collections.forEach(c => {
+      c.created_at = formatTime(c.create_time);
+    });
+    res.render('mycollections.ejs', { collections });
+  });
+});
+
 app.get('/collections/:id', requireAuth, (req,res) => { //dinamiski renderēt auga informācijas EJS veidni, kad tas tiek pieprasīts
     const collectionId = req.params.id;
     const userId = req.session.userId;
@@ -149,7 +167,7 @@ app.get('/collections/:id', requireAuth, (req,res) => { //dinamiski renderēt au
             return;
         }
 
-        db.all('SELECT Words.* FROM Words JOIN CollectionWords ON Words.word_id = CollectionWords.word_id WHERE CollectionWords.collection_id = ?',
+        db.all('SELECT Words.* FROM Words JOIN CollectionWords ON Words.word_id = CollectionWords.word_id WHERE CollectionWords.collection_id = ? ORDER BY word ASC, language ASC',
         [collectionId], (err, words) => { //paņemt visus vārdus no Words kuru wordid ir dotajā collection
             if (err) {
                 console.error('Error fetching collection words in join:', err);
@@ -158,7 +176,6 @@ app.get('/collections/:id', requireAuth, (req,res) => { //dinamiski renderēt au
 
             const wordCount = words.length;
             const uniqueChars = new Set(); //set lai tikai pienemtu atskirigos chars
-            console.log('uniquechars:', uniqueChars);
 
             words.forEach(word => {
               const chars = extractHanCharacters(word.word);
@@ -186,6 +203,44 @@ app.get('/collections/:id', requireAuth, (req,res) => { //dinamiski renderēt au
         });
       });
 });
+
+app.get('/collections/:id/export', requireAuth, (req, res) => {
+  const collectionId = req.params.id;
+  const userId = req.session.userId;
+
+  db.get('SELECT * FROM Collections WHERE collection_id = ? AND user_id = ?', [collectionId, userId], (err, collection) => {
+    if (err || !collection) {
+      return res.status(404).send('Collection not found');
+    }
+
+    const sql = `
+      SELECT Words.word, Words.reading, Words.meaning, Words.language
+      FROM Words
+      JOIN CollectionWords ON Words.word_id = CollectionWords.word_id
+      WHERE CollectionWords.collection_id = ?
+    `;
+
+    db.all(sql, [collectionId], (err, words) => {
+      if (err) {
+        console.error('Error exporting collection:', err);
+        return res.status(500).send('Internal Server Error');
+      }
+
+      // Build TSV string
+      let content = 'Word[language]\tReading\tMeaning\n';
+      words.forEach(w => {
+        content += `${w.word}[${w.language}]\t${w.reading}\t${w.meaning}\n`;
+      });
+      const filename = sanitizeFilename(collection.name) + '.tsv';
+
+      // Set headers for file download
+      res.setHeader('Content-Type', 'text/tab-separated-values');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(content);
+    });
+  });
+});
+
 
 app.get('/worddata', (req, res) => { //lai ienestu visu words(Words) tabulu
     db.all('SELECT * FROM Words ORDER BY word ASC, language ASC', (err, rows) => { //kārto pēc vārda un tad valodu pārredzamībai
@@ -367,8 +422,8 @@ app.post('/create-and-add', requireAuth, (req, res) => {
       return res.status(400).send('A collection with that name already exists.');
     }
 
-    // Create new collection
-    db.run('INSERT INTO Collections (user_id, name) VALUES (?, ?)', [userId, name.trim()], function(err) {
+    const now = Math.floor(Date.now() / 1000)
+    db.run('INSERT INTO Collections (user_id, name, create_time) VALUES (?, ?, ?)', [userId, name.trim(), now], function(err) {     // Create new collection
       if (err) return res.status(500).send('Error creating collection');
       const newId = this.lastID;
       const now = Math.floor(Date.now() / 1000);
@@ -381,6 +436,14 @@ app.post('/create-and-add', requireAuth, (req, res) => {
   });
 });
 
+function formatTime(unixTimestamp) {
+  const date = new Date(unixTimestamp * 1000); // Convert seconds to ms
+  return date.toISOString().split('T')[0]; // Returns format: "YYYY-MM-DD"
+}
+
+function sanitizeFilename(name) {
+  return name.replace(/[^a-z0-9_\-]/gi, '_'); // Replace invalid characters with _
+}
 
 function isBlank(str) { //ievades pārbaude vai tajā ir tikai tukši simboli
     return str.trim().length === 0;
