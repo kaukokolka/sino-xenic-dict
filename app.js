@@ -136,7 +136,7 @@ app.get('/search', (req, res) => {
 app.get('/collections', requireAuth, (req, res) => {
   const userId = req.session.userId;
 
-  db.all('SELECT * FROM Collections WHERE user_id = ? ORDER BY name ASC', [userId], (err, collections) => {
+  db.all('SELECT * FROM Collections WHERE user_id = ? ORDER BY create_time DESC', [userId], (err, collections) => {
     if (err) {
       console.error('Error fetching user collections:', err);
       return res.status(500).send('Internal Server Error');

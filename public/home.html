@@ -16,7 +16,7 @@
           </div>
           <div class="usern-dropdown-content">
             <div onclick="location.href='/collections'">My Collections</a></div>
-            <div onclick="location.href='/logout'">Sign Out</a></div>
+            <div onclick="location.href='/logout'" style="color: red;">Sign Out</a></div>
           </div>
         </div>
     </header>
@@ -31,7 +31,6 @@
         <th>Language</th>
         <th>Meaning</th>
         <th>Reading</th>
-        <th>Approved</th>
         <th>Actions</th>
       </tr>
     </table>
@@ -94,14 +93,12 @@
             const td2 = document.createElement('td');
             const td3 = document.createElement('td');
             const td4 = document.createElement('td');
-            const td5 = document.createElement('td');
             const td6 = document.createElement('td');
             const a = document.createElement('a');
             td1.textContent = `${item.word}`;
             td2.textContent = `${item.language}`;
             td3.textContent = `${item.meaning}`;
             td4.textContent = `${item.reading}`;
-            td5.textContent = `${item.approved}`;
             a.innerHTML = 'See page';
             a.href = `/search?query=${item.word}`;
             dataTable.appendChild(tr);
@@ -109,7 +106,6 @@
             tr.appendChild(td2);
             tr.appendChild(td3);
             tr.appendChild(td4);
-            tr.appendChild(td5);
             tr.appendChild(td6);
             td6.appendChild(a);
           });

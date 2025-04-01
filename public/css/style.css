@@ -1,5 +1,6 @@
 body {
   font-family: Helvetica, sans-serif;
+  margin: 0 40px;
 }
 
 table {
@@ -41,6 +42,8 @@ header {
   color: inherit;
 }
 
+/* forms */
+
 .form {
   margin: 50px auto;
   width: 200px;
@@ -55,6 +58,42 @@ header {
 .form select {
   margin-bottom: 10px;
 }
+
+/* search bar */
+
+#search-form {
+  margin: 0px 0 30px 0px;  /* trbl */
+}
+
+#search-form input[type="text"] {
+  padding: 10px 14px;
+  font-size: 1rem;
+  width: 500px;
+  border: 1px solid #ccc;
+  border-radius: 6px 0 0 6px;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+#search-form input[type="text"]:focus {
+  border-color: #888;
+}
+
+#search-form button {
+  padding: 10px 16px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0 6px 6px 0;
+  background-color: #f4f4f4;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#search-form button:hover {
+  background-color: #e0e0e0;
+}
+
+/*dropdowns etc*/
 
 .usern-shower {
   display: flex;
