@@ -197,6 +197,18 @@ button {
   background-color: #eaeaea;
 }
 
+.remove-button {
+  margin: 5px 5px;
+  width: 130px;
+  border: 1px solid #ccc;
+  background: #ff6b6b;
+}
+
+.remove-button:hover {
+  background-color: #e04848;
+}
+
+
 .word-search-button {
   margin: 5px 5px;
   width: 130px;

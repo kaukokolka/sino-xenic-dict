@@ -72,7 +72,8 @@
         <td><%= item.language %></td>
         <td><%= item.reading %></td>
         <td><%= item.meaning %></td>
-        <td><button class="word-search-button" onclick="location.href='/search?query=<%= item.word %>'">See page</button></td>
+        <td><button class="word-search-button" onclick="location.href='/search?query=<%= item.word %>'">See page</button>
+        <button class="remove-button" onclick="removeFromCollection(<%= item.word_id %>)">Remove</button></td>
       </tr>
     <% }) %>
   </table>
@@ -81,6 +82,29 @@
 <% } %>
 
   <script>
+    function removeFromCollection(wordId) {
+      const collectionId = <%= collection.collection_id %>; // passed in from backend
+
+      fetch('/remove-from-collection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ collectionId, wordId })
+      })
+      .then(res => {
+        if (res.ok) {
+          console.log('Word removed');
+          window.location.reload(); // refresh to update the table
+        } else {
+          console.error('Failed to remove word');
+        }
+      })
+      .catch(err => {
+        console.error('Network error:', err);
+      });
+    }
+
     /*for usern*/
     fetch('/user')
       .then(res => res.json())

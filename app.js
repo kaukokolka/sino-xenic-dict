@@ -191,7 +191,7 @@ app.get('/collections/:id', requireAuth, (req,res) => { //dinamiski renderēt au
             const characterCount = charList.length;
 
             if (charList.length === 0) {
-                return res.render('collection.ejs', { collection, words, characters: [] });
+                return res.render('collection.ejs', { collection, words, characters: [], wordCount, characterCount });
             }
 
             const placeholders = charList.map(() => '?').join(', ');
@@ -448,6 +448,29 @@ app.post('/add-to-collection', requireAuth, (req, res) => {
     });
   });
 });
+
+app.post('/remove-from-collection', requireAuth, (req, res) => {
+  const { collectionId, wordId } = req.body;
+  const userId = req.session.userId;
+
+  // Safety purposes, lai tikai var nonemt no sava collection
+  db.get('SELECT 1 FROM Collections WHERE collection_id = ? AND user_id = ?', [collectionId, userId], (err, row) => {
+    if (err || !row) return res.status(403).send('Unauthorized');
+
+    db.run(
+      'DELETE FROM CollectionWords WHERE collection_id = ? AND word_id = ?',
+      [collectionId, wordId],
+      function (err) {
+        if (err) {
+          console.error('Error removing word from collection:', err);
+          return res.status(500).send('Internal Server Error');
+        }
+        res.sendStatus(200);
+      }
+    );
+  });
+});
+
 
 app.post('/create-and-add', requireAuth, (req, res) => {
   const userId = req.session.userId;
