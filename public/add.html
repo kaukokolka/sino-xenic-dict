@@ -3,13 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sino-Xenic Dictionary</title>
+    <title>Sino-Xenic Dictionary - Add Word </title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <header>
-    <h1>Sino-Xenic Dictionary </h1>
+    <h1 class="logo"><a href="/">Sino-Xenic Dictionary</a></h1>
+      <div id="usern-dropdown" class="dropdown">
+        <div id="usern-shower" class="usern-shower" onclick="toggleDropdown(this)">
+          <span id="usern-span" class="usern-span"></span>
+          <span id="usern-preferences" class="usern-pref"></span>
+        </div>
+        <div class="usern-dropdown-content">
+          <div onclick="location.href='/collections'">My Collections</a></div>
+          <div onclick="location.href='/logout'">Sign Out</a></div>
+        </div>
+      </div>
   </header>
+
   <div id="newWordUI" class="form">
     <h2 style="margin-top: 0;">Add word to dictionary</h2>
     <form action="/addword" method="post">
@@ -28,5 +39,54 @@
         <input type="submit" id="submit" value="Submit">
     </form>
   </div>
+  <script>
+  /*for usern*/
+  fetch('/user')
+    .then(res => res.json())
+    .then(user => {
+      const span = document.getElementById('usern-span');
+      const pref = document.getElementById('usern-preferences');
+      const drop = document.getElementById('usern-dropdown');
+      const shower = document.getElementById('usern-shower');
+
+      if (user.loggedIn) {
+        span.innerText = user.username;
+        pref.innerText = '▼';
+        drop.classList.remove('unauthorized');
+      } else {
+        // ja nav ielogots, rada sign in or sign up username vieta
+        span.innerHTML = `
+          <a href="/signin" class="login-link">Sign in or Sign up</a>
+        `;
+        drop.classList.add('unauthorized');
+        //
+        const createButtons = document.querySelectorAll('.dropdown-create');
+        createButtons.forEach(btn => {
+          btn.innerHTML = `<span style="color: grey;"><a href="/signin">Sign in</a> to use collections</span>`;
+          btn.onclick = null; // prevent interaction
+          btn.style.cursor = 'default';
+        });
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching user info:', err);
+    });
+
+    function toggleDropdown(button) {
+      const dropdown = button.closest('.dropdown');
+      if (dropdown.classList.contains('unauthorized')) return; // don't open for logged-out users
+      dropdown.classList.toggle('show');
+    }
+
+    // Aizvert dropdown clickojot ara no dropdown ja kads ir atverts
+    window.addEventListener('click', function(e) {
+      document.querySelectorAll('.dropdown.show').forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  /*end for usern*/
+  </script>
 </body>
 </html>

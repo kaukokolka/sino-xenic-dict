@@ -36,6 +36,26 @@ header {
   justify-content: space-between;
 }
 
+.logo a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.form {
+  margin: 50px auto;
+  width: 200px;
+  padding: 20px;
+  border: 4px solid grey;
+}
+
+.form input {
+  margin-bottom: 10px;
+}
+
+.form select {
+  margin-bottom: 10px;
+}
+
 .usern-shower {
   display: flex;
   flex-direction: row;
@@ -52,6 +72,10 @@ header {
   cursor: pointer;
   border: 1px solid #ccc;
   border-radius: 6px;
+}
+
+.unauthorized div {
+  cursor: default;
 }
 
 .usern-span {
@@ -90,6 +114,10 @@ header {
   text-overflow: ellipsis;  /* show ... at end */
 }
 
+.dropdown.show .dropdown-content {
+  display: block;
+}
+
 .dropdown-content div {
   padding: 8px;
   cursor: pointer;
@@ -126,8 +154,4 @@ header {
 
 .usern-dropdown-content div:hover {
   background-color: #f0f0f0;
-}
-
-.dropdown.show .usern-dropdown-content {
-  display: block;
 }
