@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sino-Xenic Dictionary - My Collections</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1 class="logo"><a href="/">Sino-Xenic Dictionary</a></h1>
+      <div id="usern-dropdown" class="dropdown">
+        <div id="usern-shower" class="usern-shower" onclick="toggleDropdown(this)">
+          <span id="usern-span" class="usern-span"></span>
+          <span id="usern-preferences" class="usern-pref"></span>
+        </div>
+        <div class="usern-dropdown-content">
+          <div onclick="location.href='/collections'">My Collections</a></div>
+          <div onclick="location.href='/add'" id="add-words-button">Add Words</a></div>
+          <div onclick="location.href='/logout'" style="color: red;">Sign Out</a></div>
+        </div>
+      </div>
+  </header>
+  <h2>Edit Word</h2>
+
+  <form action="/edit/char/<%= char.char_id %>" method="POST">
+    <p><strong>Character:</strong> <%= char.char %> </p>
+
+    <label for="meaning">Meaning:</label><br>
+    <input type="text" name="meaning" value="<%= char.meaning %>"><br><br>
+
+    <label for="readingCN">Mandarin:</label><br>
+    <input type="text" name="readingCN" value="<%= char.reading_cn %>"><br><br>
+
+    <label for="readingKR">Korean:</label><br>
+    <input type="text" name="readingKR" value="<%= char.reading_kr %>"><br><br>
+
+    <label for="readingJPON">Japanese On'yomi:</label><br>
+    <input type="text" name="readingJPON" value="<%= char.reading_jp_on %>"><br><br>
+
+    <label for="readingJPKUN">Japanese Kun'yomi:</label><br>
+    <input type="text" name="readingJPKUN" value="<%= char.reading_jp_kun %>"><br><br>
+
+    <button type="submit">Save</button>
+  </form>
+
+<script>
+  /*for usern*/
+  fetch('/user')
+    .then(res => res.json())
+    .then(user => {
+      const span = document.getElementById('usern-span');
+      const pref = document.getElementById('usern-preferences');
+      const drop = document.getElementById('usern-dropdown');
+      const shower = document.getElementById('usern-shower');
+      const addwbtn = document.getElementById('add-words-button');
+
+      if (user.loggedIn) {
+        if (user.admin) {
+          span.innerText = `${user.username} (admin)`;
+          addwbtn.style.display = 'block';
+        } else {
+          span.innerText = user.username;
+          addwbtn.style.display = 'none';
+        }
+        pref.innerText = '▼';
+        drop.classList.remove('unauthorized');
+      } else {
+        // ja nav ielogots, rada sign in or sign up username vieta
+        span.innerHTML = `
+          <a href="/signin" class="login-link">Sign in or Sign up</a>
+        `;
+        drop.classList.add('unauthorized');
+        //
+        const createButtons = document.querySelectorAll('.dropdown-create');
+        createButtons.forEach(btn => {
+          btn.innerHTML = `<span style="color: grey;"><a href="/signin">Sign in</a> to use collections</span>`;
+          btn.onclick = null; // prevent interaction
+          btn.style.cursor = 'default';
+        });
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching user info:', err);
+    });
+
+    function toggleDropdown(button) {
+      const dropdown = button.closest('.dropdown');
+      if (dropdown.classList.contains('unauthorized')) return; // don't open for logged-out users
+      dropdown.classList.toggle('show');
+    }
+
+    // Aizvert dropdown clickojot ara no dropdown ja kads ir atverts
+    window.addEventListener('click', function(e) {
+      document.querySelectorAll('.dropdown.show').forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  /*end for usern*/
+</script>
+</body>
+</html>

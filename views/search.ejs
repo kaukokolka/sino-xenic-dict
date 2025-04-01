@@ -40,6 +40,7 @@
             <div><strong>Korean:</strong> <%= char.reading_kr %></div>
             <div><strong>On'yomi:</strong> <%= char.reading_jp_on %></div>
             <div><strong>Kun'yomi:</strong> <%= char.reading_jp_kun %></div>
+            <div class="charedit noadmin"><a href="/edit/char/<%= char.char_id %>">Edit</a></div>
           </div>
         </div>
       <% }) %>
@@ -59,8 +60,8 @@
     <tr>
       <th>Word</th>
       <th>Language</th>
-      <th>Meaning</th>
       <th>Reading</th>
+      <th>Meaning</th>
       <th>Actions</th>
     </tr>
     <% words.forEach(item => { %>
@@ -100,6 +101,7 @@ fetch('/user')
     const shower = document.getElementById('usern-shower');
     const addwbtn = document.getElementById('add-words-button');
     const editButtons = document.querySelectorAll('.wordedit');
+    const editCharButtons = document.querySelectorAll('.charedit');
 
     if (user.loggedIn) {
       if (user.admin) {
@@ -107,6 +109,9 @@ fetch('/user')
         addwbtn.style.display = 'block';
         editButtons.forEach(ebtn => {
           ebtn.classList.remove('noadmin');
+        })
+        editCharButtons.forEach(cbtn => {
+          cbtn.classList.remove('noadmin');
         })
       } else {
         span.innerText = user.username;

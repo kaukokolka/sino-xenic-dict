@@ -309,7 +309,7 @@ app.get('/user', function (req, res) { //lai ienestu lietotāja datus, kur nepie
     });
 });
 
-app.get('/edit/word/:id', requireAuth, (req, res) => {
+app.get('/edit/word/:id', requireAuth, requireAdmin, (req, res) => {
   const wordId = req.params.id;
 
   db.get('SELECT * FROM Words WHERE word_id = ?', [wordId], (err, row) => {
@@ -320,7 +320,7 @@ app.get('/edit/word/:id', requireAuth, (req, res) => {
   });
 });
 
-app.post('/edit/word/:id', requireAuth, (req, res) => {
+app.post('/edit/word/:id', requireAuth, requireAdmin, (req, res) => {
   const wordId = req.params.id;
   const { reading, meaning } = req.body;
 
@@ -333,6 +333,34 @@ app.post('/edit/word/:id', requireAuth, (req, res) => {
         return res.status(500).send('Internal Server Error');
       }
       res.redirect('/search?query=' + encodeURIComponent(req.body.reading));
+    }
+  );
+});
+
+app.get('/edit/char/:id', requireAuth, requireAdmin, (req, res) => {
+  const charId = req.params.id;
+
+  db.get('SELECT * FROM Characters WHERE char_id = ?', [charId], (err, row) => {
+    if (err || !row) {
+      return res.status(404).send('Character not found');
+    }
+    res.render('edit-char.ejs', { char: row });
+  });
+});
+
+app.post('/edit/char/:id', requireAuth, requireAdmin, (req, res) => {
+  const charId = req.params.id;
+  const { meaning, readingCN, readingKR, readingJPON, readingJPKUN } = req.body;
+
+  db.run(
+    'UPDATE characters SET meaning = ?, reading_cn = ?, reading_kr = ?, reading_jp_on = ?, reading_jp_kun = ? WHERE char_id = ?',
+    [meaning, readingCN, readingKR, readingJPON, readingJPKUN, charId],
+    function (err) {
+      if (err) {
+        console.error('Failed to update word:', err);
+        return res.status(500).send('Internal Server Error');
+      }
+      res.redirect('/search?query=' + encodeURIComponent(req.body.meaning));
     }
   );
 });
