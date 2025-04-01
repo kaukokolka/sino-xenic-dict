@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sino-Xenic Dictionary - Add Word </title>
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <title>Sino-Xenic Dictionary - My Collections</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <header>
@@ -21,29 +20,21 @@
         </div>
       </div>
   </header>
+  <h2>Edit Word</h2>
 
-    <h2>Add Word to Dictionary</h2>
-    <form action="/addword" method="post">
-        <label for="word">Word:</label> <br/>
-        <input type="text" id="word" name="word" required> <br/><br>
+  <form action="/edit/word/<%= word.word_id %>" method="POST">
+    <p><strong>Word:</strong> <%= word.word %> [<%= word.language %>]</p>
 
-        <label for="language">Language:</label>
-        <select name="language" id="language">
-          <option value="CN">Mandarin Chinese</option>
-          <option value="JP">Japanese</option>
-          <option value="KR">Korean</option>
-        </select> <br/><br>
+    <label for="reading">Reading:</label><br>
+    <input type="text" name="reading" value="<%= word.reading %>"><br><br>
 
-        <label for="meaning">Meaning(in English):</label> <br/>
-        <input type="text" id="meaning" name="meaning" required> <br/><br>
+    <label for="meaning">Meaning:</label><br>
+    <input type="text" name="meaning" value="<%= word.meaning %>"><br><br>
 
-        <label for="reading">Reading(Pinyin, Kana or Hangul):</label> <br/>
-        <input type="text" id="reading" name="reading" required> <br/><br>
+    <button type="submit">Save</button>
+  </form>
 
-        <button type="submit">Add</button>
-    </form>
-  </div>
-  <script>
+<script>
   /*for usern*/
   fetch('/user')
     .then(res => res.json())
@@ -98,6 +89,6 @@
       });
     });
   /*end for usern*/
-  </script>
+</script>
 </body>
 </html>

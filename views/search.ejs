@@ -80,6 +80,7 @@
             </div>
           </div>
           <button class="word-search-button" onclick="location.href='/search?query=<%= item.word %>'">See page</button>
+          <a href="/edit/word/<%= item.word_id %>" class="wordedit noadmin">Edit</a>
         </td>
       </tr>
     <% }) %>
@@ -98,11 +99,15 @@ fetch('/user')
     const drop = document.getElementById('usern-dropdown');
     const shower = document.getElementById('usern-shower');
     const addwbtn = document.getElementById('add-words-button');
+    const editButtons = document.querySelectorAll('.wordedit');
 
     if (user.loggedIn) {
       if (user.admin) {
         span.innerText = `${user.username} (admin)`;
         addwbtn.style.display = 'block';
+        editButtons.forEach(ebtn => {
+          ebtn.classList.remove('noadmin');
+        })
       } else {
         span.innerText = user.username;
         addwbtn.style.display = 'none';

@@ -309,6 +309,35 @@ app.get('/user', function (req, res) { //lai ienestu lietotāja datus, kur nepie
     });
 });
 
+app.get('/edit/word/:id', requireAuth, (req, res) => {
+  const wordId = req.params.id;
+
+  db.get('SELECT * FROM Words WHERE word_id = ?', [wordId], (err, row) => {
+    if (err || !row) {
+      return res.status(404).send('Word not found');
+    }
+    res.render('edit-word.ejs', { word: row });
+  });
+});
+
+app.post('/edit/word/:id', requireAuth, (req, res) => {
+  const wordId = req.params.id;
+  const { reading, meaning } = req.body;
+
+  db.run(
+    'UPDATE Words SET reading = ?, meaning = ? WHERE word_id = ?',
+    [reading, meaning, wordId],
+    function (err) {
+      if (err) {
+        console.error('Failed to update word:', err);
+        return res.status(500).send('Internal Server Error');
+      }
+      res.redirect('/search?query=' + encodeURIComponent(req.body.reading));
+    }
+  );
+});
+
+
 app.post('/validate', (req, res) => { //Verificēt vai ievadītie dati sakrīt ar kādu no pastāvošiem lietotājiem un uzsāk sesiju
     const username = req.body.username;
     const password = sha256(req.body.password);
