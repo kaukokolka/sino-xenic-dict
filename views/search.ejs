@@ -15,6 +15,7 @@
         </div>
         <div class="usern-dropdown-content">
           <div onclick="location.href='/collections'">My Collections</a></div>
+          <div onclick="location.href='/add'" id="add-words-button">Add Words</a></div>
           <div onclick="location.href='/logout'" style="color: red;">Sign Out</a></div>
         </div>
       </div>
@@ -29,29 +30,24 @@
   <h2>Characters</h2>
 
   <% if (characters.length > 0) { %>
-  <table>
-    <tr>
-      <th>Character</th>
-      <th>Meaning</th>
-      <th>CN</th>
-      <th>KR</th>
-      <th>On'yomi</th>
-      <th>Kun'yomi</th>
-    </tr>
-    <% characters.forEach(char => { %>
-      <tr>
-        <td><%= char.char %></td>
-        <td><%= char.meaning %></td>
-        <td><%= char.reading_cn %></td>
-        <td><%= char.reading_kr %></td>
-        <td><%= char.reading_jp_on %></td>
-        <td><%= char.reading_jp_kun %></td>
-      </tr>
-    <% }) %>
-  </table>
-<% } else { %>
-  <p>ʅ ( ․ ⤙ ․) ᶴ   Sorry. No matching characters.</p>
-<% } %>
+    <div class="char-grid">
+      <% characters.forEach(char => { %>
+        <div class="char-card" onclick="location.href='/search?query=<%= char.char %>'">
+          <div class="char-big"><%= char.char %></div>
+          <div class="char-info">
+            <div><strong>Meaning:</strong> <%= char.meaning %></div>
+            <div><strong>Mandarin:</strong> <%= char.reading_cn %></div>
+            <div><strong>Korean:</strong> <%= char.reading_kr %></div>
+            <div><strong>On'yomi:</strong> <%= char.reading_jp_on %></div>
+            <div><strong>Kun'yomi:</strong> <%= char.reading_jp_kun %></div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>ʅ ( ․ ⤙ ․) ᶴ   Sorry. No matching characters.</p>
+  <% } %>
+
 
 <hr>
 
@@ -59,21 +55,20 @@
 
 <!-- Reuse the word table from before -->
 <% if (words.length > 0) { %>
-  <table>
+  <table class="search-table">
     <tr>
       <th>Word</th>
       <th>Language</th>
       <th>Meaning</th>
       <th>Reading</th>
-      <th>Collections test</th>
       <th>Actions</th>
     </tr>
     <% words.forEach(item => { %>
       <tr>
         <td><%= item.word %></td>
         <td><%= item.language %></td>
-        <td><%= item.meaning %></td>
         <td><%= item.reading %></td>
+        <td><%= item.meaning %></td>
         <td>
           <div class="dropdown" data-word-id="<%= item.word_id %>">
             <button class="dropdown-button" onclick="toggleDropdown(this)">Add to collection ▼</button>
@@ -84,8 +79,8 @@
               <% }) %>
             </div>
           </div>
+          <button class="word-search-button" onclick="location.href='/search?query=<%= item.word %>'">See page</button>
         </td>
-        <td><a href="/search?query=<%= item.word %>">See page</a></td>
       </tr>
     <% }) %>
   </table>
@@ -102,9 +97,16 @@ fetch('/user')
     const pref = document.getElementById('usern-preferences');
     const drop = document.getElementById('usern-dropdown');
     const shower = document.getElementById('usern-shower');
+    const addwbtn = document.getElementById('add-words-button');
 
     if (user.loggedIn) {
-      span.innerText = user.username;
+      if (user.admin) {
+        span.innerText = `${user.username} (admin)`;
+        addwbtn.style.display = 'block';
+      } else {
+        span.innerText = user.username;
+        addwbtn.style.display = 'none';
+      }
       pref.innerText = '▼';
       drop.classList.remove('unauthorized');
     } else {

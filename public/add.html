@@ -16,6 +16,7 @@
         </div>
         <div class="usern-dropdown-content">
           <div onclick="location.href='/collections'">My Collections</a></div>
+          <div onclick="location.href='/add'" id="add-words-button">Add Words</a></div>
           <div onclick="location.href='/logout'" style="color: red;">Sign Out</a></div>
         </div>
       </div>
@@ -48,9 +49,16 @@
       const pref = document.getElementById('usern-preferences');
       const drop = document.getElementById('usern-dropdown');
       const shower = document.getElementById('usern-shower');
+      const addwbtn = document.getElementById('add-words-button');
 
       if (user.loggedIn) {
-        span.innerText = user.username;
+        if (user.admin) {
+          span.innerText = `${user.username} (admin)`;
+          addwbtn.style.display = 'block';
+        } else {
+          span.innerText = user.username;
+          addwbtn.style.display = 'none';
+        }
         pref.innerText = '▼';
         drop.classList.remove('unauthorized');
       } else {

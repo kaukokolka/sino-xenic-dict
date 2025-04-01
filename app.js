@@ -62,6 +62,10 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));
 });
 
+app.get('/words', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'wordlist.html'));
+});
+
 app.get('/signin', requireNoAuth, function(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'signin.html'));
 });

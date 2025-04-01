@@ -26,13 +26,14 @@
       <input type="text" name="query" placeholder="Search characters & words by their characters, readings, or meanings">
       <button type="submit">Search</button>
     </form>
-    <p>
-  Welcome to the Sino-Xenic Dictionary — a tool for exploring Han characters and the words they form across Japanese, Korean, and Chinese.<br><br>
-
-  • Use the search bar above to look up characters or words. You'll see their meanings, readings, and how they appear in all three languages.<br><br>
-
-  • Log in to save words to your own collections, and export them as Anki decks to help you review and memorize them with ease.<br><br>
-</p>
+    <table id="data-table">
+      <tr>
+        <th>Word</th>
+        <th>Language</th>
+        <th>Meaning</th>
+        <th>Reading</th>
+      </tr>
+    </table>
     <script>
         /*for usern*/
         fetch('/user')
@@ -88,6 +89,30 @@
             });
           });
         /*end for usern*/
+        // Fetch data from server and populate the HTML page
+        fetch('/worddata')
+        .then(response => response.json())
+        .then(data => {
+          const dataTable = document.getElementById('data-table');
+          data.forEach(item => {
+            const tr = document.createElement('tr');
+            const td1 = document.createElement('td');
+            const td2 = document.createElement('td');
+            const td3 = document.createElement('td');
+            const td4 = document.createElement('td');
+            const a = document.createElement('a');
+            td1.textContent = `${item.word}`;
+            td2.textContent = `${item.language}`;
+            td3.textContent = `${item.meaning}`;
+            td4.textContent = `${item.reading}`;
+            dataTable.appendChild(tr);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            tr.appendChild(td4);
+          });
+        })
+        .catch(error => console.error('Error:', error));
     </script>
   </body>
   </html>

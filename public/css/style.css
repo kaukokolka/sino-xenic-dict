@@ -93,6 +93,48 @@ header {
   background-color: #e0e0e0;
 }
 
+/* tables */
+.search-table th:nth-child(1) { width: 15%; }
+.search-table th:nth-child(2) { width: 5%; }
+.search-table th:nth-child(3) { width: 15%; }
+.search-table th:nth-child(4) { width: 40%; }
+.search-table th:nth-child(5) { width: 25%; }
+
+.collword-table th:nth-child(1) { width: 15%; }
+.collword-table th:nth-child(2) { width: 5%; }
+.collword-table th:nth-child(3) { width: 15%; }
+.collword-table th:nth-child(4) { width: 45%; }
+.collword-table th:nth-child(5) { width: 20%; }
+
+/* charcards */
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* 3–4 columns */
+  gap: 16px;
+}
+
+.char-card {
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 12px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.char-big {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.char-info div {
+  margin-bottom: 0.4em;
+}
+
+
+
 /*dropdowns etc*/
 
 .usern-shower {
@@ -125,18 +167,58 @@ header {
 }
 
 .dropdown {
-      position: relative;
-      display: inline-block;
-    }
+  position: relative;
+  display: inline-block;
+}
 
-.dropdown-button {
+.noadmin {
+  display: none;
+}
+
+.yesadmin {
+  display: block;
+}
+
+button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
-  width: 180px;
   cursor: pointer;
-  border: 1px solid #ccc;
   border-radius: 6px;
+}
+
+.dropdown-button {
+  margin: 5px 5px;
+  width: 180px;
+  border: 1px solid #ccc;
+  background: #f9f9f9; /*#FF75BA　#f6e5f7*/
+}
+
+.dropdown-button:hover {
+  background-color: #eaeaea;
+}
+
+.word-search-button {
+  margin: 5px 5px;
+  width: 130px;
+  border: 1px solid #ccc;
   background: #f9f9f9;
+}
+
+.word-search-button:hover {
+  background-color: #eaeaea;
+}
+
+.export-button {
+  width: 180px;
+  font-size: 1rem;
+  color: white;
+  background-color: #0040ff; /* Anki-like blue */
+  border: 1px solid #2c6ecb;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.export-button:hover {
+  background-color: #002080;
 }
 
 .dropdown-content {

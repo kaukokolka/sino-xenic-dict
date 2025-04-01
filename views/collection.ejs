@@ -15,6 +15,7 @@
         </div>
         <div class="usern-dropdown-content">
           <div onclick="location.href='/collections'">My Collections</a></div>
+          <div onclick="location.href='/add'" id="add-words-button">Add Words</a></div>
           <div onclick="location.href='/logout'" style="color: red;">Sign Out</a></div>
         </div>
       </div>
@@ -28,61 +29,55 @@
   <h1><a href="/collections">Collections</a> > "<%= collection.name %>"</h1>
 
   <form action="/collections/<%= collection.collection_id %>/export" method="GET">
-    <button type="submit">Export to Anki (.tsv)</button>
+    <button type="submit" class="export-button">Export to Anki (.tsv)</button>
   </form>
 
   <h2>Characters (<%= characterCount %>)</h2>
 
   <% if (characters.length > 0) { %>
-  <table>
-    <tr>
-      <th>Character</th>
-      <th>Meaning</th>
-      <th>CN</th>
-      <th>KR</th>
-      <th>On'yomi</th>
-      <th>Kun'yomi</th>
-    </tr>
-    <% characters.forEach(char => { %>
-      <tr>
-        <td><%= char.char %></td>
-        <td><%= char.meaning %></td>
-        <td><%= char.reading_cn %></td>
-        <td><%= char.reading_kr %></td>
-        <td><%= char.reading_jp_on %></td>
-        <td><%= char.reading_jp_kun %></td>
-      </tr>
-    <% }) %>
-  </table>
-<% } else { %>
-  <p>ʅ ( ․ ⤙ ․) ᶴ   Sorry. No matching characters.</p>
-<% } %>
+    <div class="char-grid">
+      <% characters.forEach(char => { %>
+        <div class="char-card" onclick="location.href='/search?query=<%= char.char %>'">
+          <div class="char-big"><%= char.char %></div>
+          <div class="char-info">
+            <div><strong>Meaning:</strong> <%= char.meaning %></div>
+            <div><strong>Mandarin:</strong> <%= char.reading_cn %></div>
+            <div><strong>Korean:</strong> <%= char.reading_kr %></div>
+            <div><strong>On'yomi:</strong> <%= char.reading_jp_on %></div>
+            <div><strong>Kun'yomi:</strong> <%= char.reading_jp_kun %></div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>ʅ ( ․ ⤙ ․) ᶴ   Sorry. No matching characters.</p>
+  <% } %>
 
 <hr>
 
 <h2>Words (<%= wordCount %>)</h2>
 
 <% if (words.length > 0) { %>
-  <table>
+  <table class="collword-table">
     <tr>
       <th>Word</th>
       <th>Language</th>
-      <th>Meaning</th>
       <th>Reading</th>
+      <th>Meaning</th>
       <th>Actions</th>
     </tr>
     <% words.forEach(item => { %>
       <tr>
         <td><%= item.word %></td>
         <td><%= item.language %></td>
-        <td><%= item.meaning %></td>
         <td><%= item.reading %></td>
-        <td><a href="/search?query=<%= item.word %>">See page</a></td>
+        <td><%= item.meaning %></td>
+        <td><button class="word-search-button" onclick="location.href='/search?query=<%= item.word %>'">See page</button></td>
       </tr>
     <% }) %>
   </table>
 <% } else { %>
-  <p>ʅ ( ․ ⤙ ․) ᶴ   Sorry. No matching words.</p>
+  <p>ʅ ( ․ ⤙ ․) ᶴ    It seems you haven't added any words to this collection yet.</p>
 <% } %>
 
   <script>
@@ -94,9 +89,16 @@
         const pref = document.getElementById('usern-preferences');
         const drop = document.getElementById('usern-dropdown');
         const shower = document.getElementById('usern-shower');
+        const addwbtn = document.getElementById('add-words-button');
 
         if (user.loggedIn) {
-          span.innerText = user.username;
+          if (user.admin) {
+            span.innerText = `${user.username} (admin)`;
+            addwbtn.style.display = 'block';
+          } else {
+            span.innerText = user.username;
+            addwbtn.style.display = 'none';
+          }
           pref.innerText = '▼';
           drop.classList.remove('unauthorized');
         } else {
